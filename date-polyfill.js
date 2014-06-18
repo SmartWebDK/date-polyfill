@@ -6,15 +6,15 @@ HTML5 Date polyfill | Jonathan Stipe | https://github.com/jonstipe/date-polyfill
 
 (function() {
   (function($) {
-    $.fn.inputDate = function(options) {
+    $.fn.inputDate = function() {
       var decrement, defaults, increment, makeDateDisplayString, makeDateString, readDate, stepNormalize;
       defaults = {
-        dateFormat: 'MM dd, yy',
+        dateFormat: 'yy-mm-dd',
         showButtonPanel: true,
-        changeMonth: false,
-        changeYear: false
+        changeMonth: true,
+        changeYear: true
       };
-      defaults = $.extend({}, defaults, options);
+      defaults = $.extend({}, defaults);
       readDate = function(d_str) {
         var dateObj, dayPart, matchData, monthPart, yearPart;
         if (/^\d{4,}-\d\d-\d\d$/.test(d_str)) {
@@ -134,6 +134,9 @@ HTML5 Date polyfill | Jonathan Stipe | https://github.com/jonstipe/date-polyfill
         step = $this.attr('step');
         className = $this.attr('class');
         style = $this.attr('style');
+        defaults.changeYear = $this.data("year") != null ? $this.data("year") : defaults.changeYear;
+        defaults.changeMonth = $this.data("month") != null ? $this.data("year") : defaults.showMonth;
+        defaults.dateFormat = $this.data("format") != null ? $this.data("format") : defaults.dateFormat;
         if ((value != null) && /^\d{4,}-\d\d-\d\d$/.test(value)) {
           value = readDate(value);
         } else {
@@ -253,7 +256,7 @@ HTML5 Date polyfill | Jonathan Stipe | https://github.com/jonstipe/date-polyfill
         $calendarDiv.mouseleave(closeFunc);
         $calendarDiv.datepicker("option", "onSelect", function(dateText, inst) {
           var dateObj;
-          dateObj = $.datepicker.parseDate('MM dd, yy', dateText);
+          dateObj = $.datepicker.parseDate(defaults.dateFormat, dateText);
           $hiddenField.val(makeDateString(dateObj)).change();
           $dateBtn.text(makeDateDisplayString(dateObj, calendarDiv));
           closeFunc();

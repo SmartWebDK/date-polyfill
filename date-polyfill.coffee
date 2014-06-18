@@ -2,15 +2,15 @@
 HTML5 Date polyfill | Jonathan Stipe | https://github.com/jonstipe/date-polyfill
 ###
 (($) ->
-  $.fn.inputDate = (options) ->
+  $.fn.inputDate = ->
 
     defaults =
-      dateFormat: 'MM dd, yy'
+      dateFormat: 'yy-mm-dd'
       showButtonPanel: true
-      changeMonth: false
-      changeYear: false
+      changeMonth: true
+      changeYear: true
 
-    defaults = $.extend {}, defaults, options
+    defaults = $.extend {}, defaults
 
 
     readDate = (d_str) ->
@@ -109,6 +109,11 @@ HTML5 Date polyfill | Jonathan Stipe | https://github.com/jonstipe/date-polyfill
       step = $this.attr 'step'
       className = $this.attr 'class'
       style = $this.attr 'style'
+
+      defaults.changeYear = if $this.data("year")? then $this.data("year") else defaults.changeYear
+      defaults.changeMonth = if $this.data("month")? then $this.data("year") else defaults.showMonth
+      defaults.dateFormat = if $this.data("format")? then $this.data("format") else defaults.dateFormat
+
       if value? && /^\d{4,}-\d\d-\d\d$/.test value
         value = readDate value
       else
@@ -200,7 +205,7 @@ HTML5 Date polyfill | Jonathan Stipe | https://github.com/jonstipe/date-polyfill
 
       $calendarDiv.mouseleave closeFunc
       $calendarDiv.datepicker "option", "onSelect", (dateText, inst) ->
-        dateObj = $.datepicker.parseDate 'MM dd, yy', dateText
+        dateObj = $.datepicker.parseDate defaults.dateFormat, dateText
         $hiddenField.val(makeDateString(dateObj)).change()
         $dateBtn.text makeDateDisplayString dateObj, calendarDiv
         closeFunc()
