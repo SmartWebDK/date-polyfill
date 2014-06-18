@@ -2,7 +2,17 @@
 HTML5 Date polyfill | Jonathan Stipe | https://github.com/jonstipe/date-polyfill
 ###
 (($) ->
-  $.fn.inputDate = ->
+  $.fn.inputDate = (options) ->
+
+    defaults =
+      dateFormat: 'MM dd, yy'
+      showButtonPanel: true
+      changeMonth: false
+      changeYear: false
+
+    defaults = $.extend {}, defaults, options
+
+
     readDate = (d_str) ->
       if /^\d{4,}-\d\d-\d\d$/.test d_str
         matchData = /^(\d+)-(\d+)-(\d+)$/.exec d_str
@@ -137,15 +147,13 @@ HTML5 Date polyfill | Jonathan Stipe | https://github.com/jonstipe/date-polyfill
       dateBtn = document.createElement 'button'
       $dateBtn = $ dateBtn
       $dateBtn.addClass 'date-datepicker-button'
-      
+
       $this.replaceWith hiddenField
       $calendarContainer.insertAfter hiddenField
       $dateBtn.appendTo calendarContainer
       $calendarDiv.appendTo calendarContainer
 
-      $calendarDiv.datepicker
-        dateFormat: 'MM dd, yy'
-        showButtonPanel: true
+      $calendarDiv.datepicker $.extend {}, {
         beforeShowDay: (dateObj) ->
           if (!step? || step == 'any')
             [true, '']
@@ -154,6 +162,8 @@ HTML5 Date polyfill | Jonathan Stipe | https://github.com/jonstipe/date-polyfill
             dateDays = Math.floor(dateObj.getTime() / 86400000)
             minDays = Math.floor(min.getTime() / 86400000)
             [((dateDays - minDays) % step == 0), '']
+        }, defaults
+
 
       $dateBtn.text makeDateDisplayString(value, calendarDiv)
 
